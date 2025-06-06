@@ -1,0 +1,8 @@
+appwrite
+fastapi
+pydantic-settings
+email-validator
+python-multipart
+uvicorn
+pydantic
+
