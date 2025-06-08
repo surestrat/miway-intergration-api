@@ -1,16 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>DTech Integration</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTech Integration - {% block title %}Home{% endblock %}</title>
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
     <header>
-        <h1>DTech Integration App</h1>
+        <h1><i class="fas fa-handshake"></i> DTech Integration Portal</h1>
     </header>
     <main>
-        {% block content %}{% endblock %}
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
     </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 DTech Integration. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>

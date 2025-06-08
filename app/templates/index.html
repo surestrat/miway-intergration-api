@@ -1,6 +1,22 @@
 {% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
 {% block content %}
-<div id="login" hx-get="/api/v1/sales/login-form" hx-trigger="load">
-    <!-- Login form injected here -->
+<nav class="nav-menu">
+    <div class="nav-item" hx-get="/api/v1/sales/login-form" hx-target="#main-content">
+        <i class="fas fa-user"></i> Login
+    </div>
+    <div class="nav-item" hx-get="/api/v1/sales/upload-form" hx-target="#main-content">
+        <i class="fas fa-microphone"></i> Upload Recording
+    </div>
+    <div class="nav-item" hx-get="/api/v1/sales/status-form" hx-target="#main-content">
+        <i class="fas fa-chart-line"></i> Check Status
+</nav>
+
+<div id="main-content" class="content-area">
+    <div id="login" hx-get="/api/v1/sales/login-form" hx-trigger="load">
+        <!-- Content will be injected here -->
+    </div>
 </div>
 {% endblock %}

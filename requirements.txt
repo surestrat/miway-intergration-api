@@ -7,8 +7,14 @@ uvicorn
 pydantic
 jinja2
 python-dotenv
+setuptools
 rich
 httpx
 asyncio
+boto3
+botocore
+redis[hiredis]>=4.5.0
+aioredis>=2.0.0
+python-jose[cryptography]
 
 

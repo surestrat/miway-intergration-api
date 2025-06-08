@@ -9,12 +9,10 @@ sys.path.insert(0, str(project_root))
 
 if __name__ == "__main__":
     try:
-        from dotenv import load_dotenv
-
-        load_dotenv()
-
-        logging.basicConfig(level=(logging.DEBUG))
-
+        logging.basicConfig(
+            level=logging.DEBUG,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
         logger = logging.getLogger("Miway")
         logger.info("Starting surestrat api")
         uvicorn.run(

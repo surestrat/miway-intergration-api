@@ -1,7 +1,122 @@
-<form hx-post="/api/v1/sales/login" hx-target="#login" hx-swap="outerHTML">
-    <label>Email:</label>
-    <input type="email" name="email" required><br>
-    <label>Password:</label>
-    <input type="password" name="password" required><br>
-    <button type="submit">Login</button>
-</form>
+<div class="form-container">
+    <form hx-post="/api/v1/sales/login" 
+          hx-target="#login" 
+          hx-swap="outerHTML"
+          hx-indicator=".loading-indicator"
+          class="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto">
+        
+        <div class="text-center mb-6">
+            <i class="fas fa-user-circle text-4xl text-primary"></i>
+            <h2 class="text-2xl font-bold mt-2">Agent Login</h2>
+        </div>
+        
+        <div class="form-group mb-4">
+            <label for="email" class="form-label">
+                <i class="fas fa-envelope text-gray-500 mr-2"></i>Email Address
+            </label>
+            <input type="email" 
+                   id="email" 
+                   name="email" 
+                   required 
+                   class="form-input"
+                   placeholder="Enter your email"
+                   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                   title="Please enter a valid email address"
+                   autocomplete="email">
+            <div class="validation-feedback"></div>
+        </div>
+        
+        <div class="form-group mb-6">
+            <label for="password" class="form-label">
+                <i class="fas fa-lock text-gray-500 mr-2"></i>Password
+            </label>
+            <div class="relative">
+                <input type="password" 
+                       id="password" 
+                       name="password" 
+                       required 
+                       class="form-input pr-10"
+                       placeholder="Enter your password"
+                       minlength="8"
+                       autocomplete="current-password">
+                <button type="button" 
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                        onclick="togglePassword()">
+                    <i class="fas fa-eye" id="password-toggle-icon"></i>
+                </button>
+            </div>
+            <div class="validation-feedback"></div>
+        </div>
+
+        <button type="submit" 
+                class="btn btn-primary w-full flex items-center justify-center">
+            <i class="fas fa-sign-in-alt mr-2"></i>
+            <span>Login</span>
+            <div class="loading-indicator htmx-indicator ml-2">
+                <i class="fas fa-circle-notch fa-spin"></i>
+            </div>
+        </button>
+
+        <div id="login-error" class="error-message mt-4 hidden"></div>
+    </form>
+</div>
+
+<script>
+function togglePassword() {
+    const input = document.getElementById('password');
+    const icon = document.getElementById('password-toggle-icon');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const errorDiv = document.getElementById('login-error');
+
+    function validateInput(input) {
+        const feedback = input.nextElementSibling;
+        if (input.validity.valid) {
+            input.classList.remove('invalid');
+            input.classList.add('valid');
+            feedback.textContent = '';
+            feedback.classList.remove('error-message');
+        } else {
+            input.classList.remove('valid');
+            input.classList.add('invalid');
+            feedback.classList.add('error-message');
+            if (input.validity.valueMissing) {
+                feedback.textContent = 'This field is required';
+            } else if (input.validity.typeMismatch) {
+                feedback.textContent = 'Please enter a valid email address';
+            } else if (input.validity.tooShort) {
+                feedback.textContent = 'Password must be at least 8 characters long';
+            }
+        }
+    }
+
+    [emailInput, passwordInput].forEach(input => {
+        input.addEventListener('input', () => validateInput(input));
+        input.addEventListener('blur', () => validateInput(input));
+    });
+
+    form.addEventListener('htmx:beforeRequest', () => {
+        errorDiv.classList.add('hidden');
+    });
+
+    form.addEventListener('htmx:afterRequest', (event) => {
+        if (event.detail.failed) {
+            errorDiv.textContent = 'Login failed. Please check your credentials.';
+            errorDiv.classList.remove('hidden');
+        }
+    });
+});
+</script>
