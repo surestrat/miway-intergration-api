@@ -31,16 +31,16 @@ async def get_current_user(session_id: str = Cookie(None)) -> Optional[dict]:
         return None
     return await session_manager.get_session(session_id)
 
-@router.get("/login-form", response_class=HTMLResponse)
+@router.get("/login-form", response_class=HTMLResponse, response_model=None)
 def login_form(request: Request):
     return templates.TemplateResponse("login_form.html", {"request": request})
 
-@router.post("/login", response_class=HTMLResponse)
+@router.post("/login", response_class=HTMLResponse, response_model=None)
 async def login(
     request: Request,
+    background_tasks: BackgroundTasks,
     email: str = Form(...),
-    password: str = Form(...),
-    background_tasks: BackgroundTasks | None = None
+    password: str = Form(...)
 ):
     try:
         # Validate email
@@ -93,7 +93,7 @@ async def login(
             status_code=401
         )
 
-@router.post("/logout")
+@router.post("/logout", response_class=HTMLResponse, response_model=None)
 async def logout(session_id: str = Cookie(None)):
     """Logout user and clear session"""
     if session_id:
@@ -102,7 +102,7 @@ async def logout(session_id: str = Cookie(None)):
     response.delete_cookie("session_id")
     return response
 
-@router.post("/start", response_class=HTMLResponse)
+@router.post("/start", response_model=None)
 async def start_sales(request: StartSalesRequest, background_tasks: BackgroundTasks):
     try:
         result = await create_process(request.user, request.lead)
@@ -111,7 +111,7 @@ async def start_sales(request: StartSalesRequest, background_tasks: BackgroundTa
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/continue/{spid}")
+@router.post("/continue/{spid}", response_model=None)
 async def continue_sales(spid: str, request: BaseRequest, user: User, background_tasks: BackgroundTasks):
     try:
         result = await continue_process(spid, user)
@@ -124,7 +124,7 @@ async def continue_sales(spid: str, request: BaseRequest, user: User, background
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/status/{spid}/{accountid}")
+@router.get("/status/{spid}/{accountid}", response_model=None)
 async def get_process_status(spid: str, accountid: str):
     try:
         result = await get_status(spid, accountid)
@@ -132,7 +132,7 @@ async def get_process_status(spid: str, accountid: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/stop/{spid}")
+@router.post("/stop/{spid}", response_model=None)
 async def stop_process(spid: str, request: BaseRequest, reason: str):
     try:
         result = await dtech_stop_process(spid, request.account_id, reason)
@@ -199,7 +199,7 @@ async def get_recording_upload_url(
             content={"detail": error.detail}
         )
 
-@router.get("/upload-status/{upload_id}")
+@router.get("/upload-status/{upload_id}", response_model=None)
 async def get_upload_status(
     upload_id: str,
     current_user: dict = Depends(get_current_user)
